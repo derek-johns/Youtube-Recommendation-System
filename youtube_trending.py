@@ -7,6 +7,7 @@ snippet_features = ["title",
                     "categoryId"]
 
 unsafe_characters = ['\n', '"']
+api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
 
 # Used to identify columns, currently hardcoded order
 header = ["video_id"] + snippet_features + ["trending_date", "tags", "view_count", "likes", "dislikes",
@@ -49,7 +50,7 @@ def get_videos(items):
         features = [prepare_feature(snippet.get(feature, "")) for feature in snippet_features]
         description = snippet.get("description", "")
         thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
-        trending_date = time.strftime("%y.%d.%m")
+        trending_date = '21.05.01'
         tags = get_tags(snippet.get("tags", ["[none]"]))
         view_count = statistics.get("viewCount", 0)
 
@@ -91,10 +92,7 @@ def write_to_file(country_code, country_data):
 
     print(f"Writing {country_code} data to file...")
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    with open(f"{output_dir}/{time.strftime('%y.%d.%m')}_{country_code}_videos.csv", "w+", encoding='utf-8') as file:
+    with open(f"{time.strftime('%y.%d.%m')}_{country_code}_videos2.csv", "w+", encoding='utf-8') as file:
         for row in country_data:
             file.write(f"{row}\n")
 
@@ -105,12 +103,12 @@ def get_data():
         write_to_file(country_code, country_data)
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--output_dir', help='Path to save the outputted files in', default='output/')
-    args = parser.parse_args()
-    output_dir = args.output_dir
-    api_key = os.getenv('youtube_api_key')
-    country_codes = ['US']
-    get_data()
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('--output_dir', help='Path to save the outputted files in', default='output/')
+#     args = parser.parse_args()
+#     output_dir = args.output_dir
+#     api_key = os.getenv('youtube_api_key')
+country_codes = ['US']
+get_data()
