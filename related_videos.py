@@ -4,15 +4,14 @@ import requests
 import time
 import json
 import re
+from datetime import timedelta
 
 hours_pattern = re.compile(r'(\d+)H')
 minutes_pattern = re.compile(r'(\d+)M')
 seconds_pattern = re.compile(r'(\d+)S')
 
-total_seconds = 0
-
 country_code='US'
-api_key=os.environ.get('ytkey')
+api_key=''
 api_name='search'
 i=0
 snippet_features = ["title",
@@ -67,7 +66,7 @@ def get_videos(items):
             continue
         video_id = video['id']['videoId']
         snippet = video['snippet']
-        features = [snippet.get(feature, "") for feature in snippet_features]
+        features = [prepare_feature(snippet.get(feature, "")) for feature in snippet_features]
         duration, category_id = get_youtube_video_duration(video_id)
         thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
         tags = get_tags(snippet.get("tags", ["[none]"]))
@@ -90,11 +89,14 @@ def get_youtube_video_duration(video_id):
     hours = int(hours.group(1)) if hours else 0
     minutes = int(minutes.group(1)) if minutes else 0
     seconds = int(seconds.group(1)) if seconds else 0
-    time=(f'{hours}:{minutes}:{seconds}')
-    return time, category 
+    video_seconds = str(timedelta(
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds
+        ).total_seconds())
+    return video_seconds, category 
 
 trend_dict = csv.DictReader(trending_file)
 vid_ids = create_vid_id_list(trend_dict)
-get_pages(vid_ids[0])
-# for id in vid_ids:
-#     get_pages(id)
+for id in vid_ids:
+     get_pages(id)
