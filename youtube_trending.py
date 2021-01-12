@@ -7,7 +7,7 @@ snippet_features = ["title",
                     "categoryId"]
 
 unsafe_characters = ['\n', '"']
-api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
+api_key=''
 
 # Used to identify columns, currently hardcoded order
 header = ["video_id"] + snippet_features + ["trending_date", "tags", "view_count", "likes", "dislikes",
