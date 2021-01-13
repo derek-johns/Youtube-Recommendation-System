@@ -13,7 +13,7 @@ seconds_pattern = re.compile(r'(\d+)S')
 country_code='US'
 api_key=''
 api_name='search'
-i=0
+
 snippet_features = ["title",
                     "channelId",
                     "channelTitle",
@@ -26,7 +26,7 @@ def api_request(page_token, vid_id):
     request = requests.get(request_url)
     return request.json()
     
-trending_file = open(r'C:\Python\Youtube proj\Youtube-Recommendation-System\output\trending_vids.csv', mode='r', encoding='utf8')
+trending_file = open(f'~/{time.strftime('%y.%d.%m')}_US_videos.csv', mode='r', encoding='utf8')
 
 def prepare_feature(feature):
     for ch in unsafe_characters:
@@ -113,8 +113,9 @@ def get_channel_info(channel_id):
     description = prepare_feature(description)
     ret_keys = prepare_feature(keywords)
     return description, ret_keys
-trend_dict = csv.DictReader(trending_file)
-vid_ids = create_vid_id_list(trend_dict)
-get_pages(vid_ids[0])
-# for id in vid_ids:
-#      get_pages(id)
+
+def create_files():
+    trend_dict = csv.DictReader(trending_file)
+    vid_ids = create_vid_id_list(trend_dict)
+    for id in vid_ids:
+        get_pages(id)
