@@ -11,7 +11,7 @@ minutes_pattern = re.compile(r'(\d+)M')
 seconds_pattern = re.compile(r'(\d+)S')
 
 country_code='US'
-api_key=''
+api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
 api_name='search'
 i=0
 snippet_features = ["title",
@@ -19,7 +19,7 @@ snippet_features = ["title",
                     "channelTitle",
                     ]
 unsafe_characters = ['\n', '"']
-header = ["video_id"] + snippet_features + ["categoryId", "duration", "thumbnail_link", "tags", "description", "channel_desc", "channel_keywords"]
+header = ["video_id"] + snippet_features + ["categoryId", "duration", "thumbnail_link", "tags", "description", "channel_desc", "channel_keywords", "related_vid_id"]
 
 def api_request(page_token, vid_id):
     request_url = f"https://www.googleapis.com/youtube/v3/{api_name}?part=snippet{page_token}relatedToVideoId={vid_id}&type=video&regionCode=US&maxResults=50&key={api_key}"
@@ -50,7 +50,7 @@ def get_pages(vid_id, next_page_token="&"):
         next_page_token = video_data_page.get("nextPageToken", None)
         next_page_token = f"&pageToken={next_page_token}&" if next_page_token is not None else next_page_token
         items = video_data_page.get('items', [])
-        country_data += get_videos(items)
+        country_data += get_videos(vid_id, items)
     country_data = [",".join(header)] + country_data
     write_to_file(country_code, country_data, vid_id)
 
@@ -59,7 +59,7 @@ def write_to_file(country_code, country_data,vid_id):
         for row in country_data:
             file.write(f"{row}\n")
 
-def get_videos(items):
+def get_videos(orig_vid_id, items):
     lines = []
     for video in items:
         if 'snippet' not in video:
@@ -75,7 +75,7 @@ def get_videos(items):
         thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
         
 
-        line = [video_id] + features + [prepare_feature(x) for x in [category_id, duration, thumbnail_link, tags, description, channel_desc, channel_keywords]]
+        line = [video_id] + features + [prepare_feature(x) for x in [category_id, duration, thumbnail_link, tags, description, channel_desc, channel_keywords, orig_vid_id]]
         lines.append(",".join(line))
     return lines
 

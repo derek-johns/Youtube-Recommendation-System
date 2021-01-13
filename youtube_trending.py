@@ -1,4 +1,9 @@
-import requests, sys, time, os, argparse
+import requests, sys, time, os, argparse, re
+from datetime import timedelta
+
+hours_pattern = re.compile(r'(\d+)H')
+minutes_pattern = re.compile(r'(\d+)M')
+seconds_pattern = re.compile(r'(\d+)S')
 
 snippet_features = ["title",
                     "publishedAt",
@@ -7,12 +12,12 @@ snippet_features = ["title",
                     "categoryId"]
 
 unsafe_characters = ['\n', '"']
-api_key=''
+api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
 
 # Used to identify columns, currently hardcoded order
 header = ["video_id"] + snippet_features + ["trending_date", "tags", "view_count", "likes", "dislikes",
                                             "comment_count", "thumbnail_link", "comments_disabled",
-                                            "ratings_disabled", "description"]
+                                            "ratings_disabled", "description", "duration"]
 
 
 
@@ -23,7 +28,7 @@ def prepare_feature(feature):
 
 
 def api_request(page_token, country_code):
-    request_url = f"https://www.googleapis.com/youtube/v3/videos?part=id,statistics,snippet{page_token}chart=mostPopular&regionCode={country_code}&maxResults=50&key={api_key}"
+    request_url = f"https://www.googleapis.com/youtube/v3/videos?part=contentDetails,id,statistics,snippet{page_token}chart=mostPopular&regionCode={country_code}&maxResults=50&key={api_key}"
     request = requests.get(request_url)
     if request.status_code == 429:
         print("Temp-Banned due to excess requests, please wait and continue later")
@@ -50,9 +55,22 @@ def get_videos(items):
         features = [prepare_feature(snippet.get(feature, "")) for feature in snippet_features]
         description = snippet.get("description", "")
         thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
-        trending_date = '21.05.01'
+        trending_date = time.strftime("%y.%d.%m")
         tags = get_tags(snippet.get("tags", ["[none]"]))
         view_count = statistics.get("viewCount", 0)
+        duration = video['contentDetails']['duration']
+        hours = hours_pattern.search(duration)
+        minutes = minutes_pattern.search(duration)
+        seconds = seconds_pattern.search(duration)
+        hours = int(hours.group(1)) if hours else 0
+        minutes = int(minutes.group(1)) if minutes else 0
+        seconds = int(seconds.group(1)) if seconds else 0
+        video_seconds = str(timedelta(
+                hours=hours,
+                minutes=minutes,
+                seconds=seconds
+            ).total_seconds())
+        duration = video_seconds
 
         if 'likeCount' in statistics and 'dislikeCount' in statistics:
             likes = statistics['likeCount']
@@ -70,7 +88,7 @@ def get_videos(items):
 
         line = [video_id] + features + [prepare_feature(x) for x in [trending_date, tags, view_count, likes, dislikes,
                                                                        comment_count, thumbnail_link, comments_disabled,
-                                                                       ratings_disabled, description]]
+                                                                       ratings_disabled, description, duration]]
         lines.append(",".join(line))
     return lines
 
@@ -90,9 +108,12 @@ def get_pages(country_code, next_page_token="&"):
 
 def write_to_file(country_code, country_data):
 
-    print(f"Writing {country_code} data to file...")
+   print(f"Writing {country_code} data to file...")
 
-    with open(f"{time.strftime('%y.%d.%m')}_{country_code}_videos2.csv", "w+", encoding='utf-8') as file:
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    with open(f"{output_dir}/{time.strftime('%y.%d.%m')}_{country_code}_videos.csv", "w+", encoding='utf-8') as file:
         for row in country_data:
             file.write(f"{row}\n")
 
@@ -103,12 +124,12 @@ def get_data():
         write_to_file(country_code, country_data)
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('--output_dir', help='Path to save the outputted files in', default='output/')
-#     args = parser.parse_args()
-#     output_dir = args.output_dir
-#     api_key = os.getenv('youtube_api_key')
-country_codes = ['US']
-get_data()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output_dir', help='Path to save the outputted files in', default='output/')
+    args = parser.parse_args()
+    output_dir = args.output_dir
+    api_key = os.getenv('youtube_api_key')
+    country_codes = ['US']
+    get_data()
