@@ -19,7 +19,7 @@ snippet_features = ["title",
                     "channelTitle",
                     ]
 unsafe_characters = ['\n', '"']
-header = ["video_id"] + snippet_features + ["categoryId", "duration", "thumbnail_link", "tags"]
+header = ["video_id"] + snippet_features + ["categoryId", "duration", "thumbnail_link", "tags", "description", "channel_desc", "channel_keywords"]
 
 def api_request(page_token, vid_id):
     request_url = f"https://www.googleapis.com/youtube/v3/{api_name}?part=snippet{page_token}relatedToVideoId={vid_id}&type=video&regionCode=US&maxResults=50&key={api_key}"
@@ -66,23 +66,28 @@ def get_videos(items):
             continue
         video_id = video['id']['videoId']
         snippet = video['snippet']
+        description = snippet.get("description", "")
+        channel_id = snippet.get('channelId')
         features = [prepare_feature(snippet.get(feature, "")) for feature in snippet_features]
-        duration, category_id = get_youtube_video_duration(video_id)
-        thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
-        tags = get_tags(snippet.get("tags", ["[none]"]))
+        duration, category_id, tags = get_youtube_video_duration(video_id)
+        channel_desc, channel_keywords = get_channel_info(channel_id)
 
-        line = [video_id] + features + [category_id, duration, thumbnail_link, tags]
+        thumbnail_link = snippet.get("thumbnails", dict()).get("default", dict()).get("url", "")
+        
+
+        line = [video_id] + features + [prepare_feature(x) for x in [category_id, duration, thumbnail_link, tags, description, channel_desc, channel_keywords]]
         lines.append(",".join(line))
     return lines
 
 def get_youtube_video_duration(video_id):
     url = f"https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id={video_id}&key={api_key}"
-
+    tags = ["none"]
     response = requests.get(url) 
     data = response.json() 
-
+    snippet = data['items'][0]['snippet']
     duration = data['items'][0]['contentDetails']['duration']
     category = data['items'][0]['snippet']['categoryId']
+    tags = get_tags(snippet.get("tags", ["[none]"]))
     hours = hours_pattern.search(duration)
     minutes = minutes_pattern.search(duration)
     seconds = seconds_pattern.search(duration)
@@ -94,9 +99,22 @@ def get_youtube_video_duration(video_id):
             minutes=minutes,
             seconds=seconds
         ).total_seconds())
-    return video_seconds, category 
+    
+    
+    return video_seconds, category, tags
 
+def get_channel_info(channel_id):
+    url = f"https://youtube.googleapis.com/youtube/v3/channels?part=brandingSettings&id={channel_id}&key={api_key}"
+    response = requests.get(url) 
+    data = response.json()
+    channel_settings = data['items'][0]['brandingSettings']['channel']
+    description=channel_settings.get('description',"")
+    keywords = channel_settings.get('keywords',"")
+    description = prepare_feature(description)
+    ret_keys = prepare_feature(keywords)
+    return description, ret_keys
 trend_dict = csv.DictReader(trending_file)
 vid_ids = create_vid_id_list(trend_dict)
-for id in vid_ids:
-     get_pages(id)
+get_pages(vid_ids[0])
+# for id in vid_ids:
+#      get_pages(id)
