@@ -108,7 +108,7 @@ def get_pages(country_code, next_page_token="&"):
 
 def write_to_file(country_code, country_data):
 
-   print(f"Writing {country_code} data to file...")
+    print(f"Writing {country_code} data to file...")
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
