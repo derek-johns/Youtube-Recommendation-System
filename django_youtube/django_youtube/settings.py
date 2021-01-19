@@ -22,7 +22,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = '@nqfhp9=9td#$#h+wvhd2la5u454kox$!=6mneiclm+@uyw9mv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,8 +78,11 @@ WSGI_APPLICATION = 'django_youtube.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'group3',
+        'HOST': 'ls-981afae8457656b0e311a4599e509521975ea3c7.c13c4sg7cvg0.us-east-2.rds.amazonaws.com',
+        'USER': 'group3',
+        'PASSWORD': 'ZCW+G3+data1-2',
     }
 }
 

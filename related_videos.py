@@ -11,7 +11,7 @@ minutes_pattern = re.compile(r'(\d+)M')
 seconds_pattern = re.compile(r'(\d+)S')
 
 country_code='US'
-api_key=''
+api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
 api_name='search'
 
 snippet_features = ["title",
@@ -26,7 +26,7 @@ def api_request(page_token, vid_id):
     request = requests.get(request_url)
     return request.json()
     
-trending_file = open(f'~/{time.strftime('%y.%d.%m')}_US_videos.csv', mode='r', encoding='utf8')
+trending_file = open(r'C:\Python\Youtube proj\Youtube-Recommendation-System\21.13.01_US_videos2.csv', mode='r', encoding='utf8')
 
 def prepare_feature(feature):
     for ch in unsafe_characters:
@@ -84,22 +84,27 @@ def get_youtube_video_duration(video_id):
     tags = ["none"]
     response = requests.get(url) 
     data = response.json() 
-    snippet = data['items'][0]['snippet']
-    duration = data['items'][0]['contentDetails']['duration']
-    category = data['items'][0]['snippet']['categoryId']
-    tags = get_tags(snippet.get("tags", ["[none]"]))
-    hours = hours_pattern.search(duration)
-    minutes = minutes_pattern.search(duration)
-    seconds = seconds_pattern.search(duration)
-    hours = int(hours.group(1)) if hours else 0
-    minutes = int(minutes.group(1)) if minutes else 0
-    seconds = int(seconds.group(1)) if seconds else 0
-    video_seconds = str(timedelta(
-            hours=hours,
-            minutes=minutes,
-            seconds=seconds
-        ).total_seconds())
-    
+    items = data.get('items', [])
+    video_seconds = 0
+    category = 0
+    tags = []
+    if len(items) != 0:
+        snippet = data['items'][0]['snippet']
+        duration = data['items'][0]['contentDetails']['duration']
+        category = data['items'][0]['snippet']['categoryId']
+        tags = get_tags(snippet.get("tags", ["[none]"]))
+        hours = hours_pattern.search(duration)
+        minutes = minutes_pattern.search(duration)
+        seconds = seconds_pattern.search(duration)
+        hours = int(hours.group(1)) if hours else 0
+        minutes = int(minutes.group(1)) if minutes else 0
+        seconds = int(seconds.group(1)) if seconds else 0
+        video_seconds = str(timedelta(
+                hours=hours,
+                minutes=minutes,
+                seconds=seconds
+            ).total_seconds())
+        return video_seconds, category, tags
     
     return video_seconds, category, tags
 
@@ -107,15 +112,25 @@ def get_channel_info(channel_id):
     url = f"https://youtube.googleapis.com/youtube/v3/channels?part=brandingSettings&id={channel_id}&key={api_key}"
     response = requests.get(url) 
     data = response.json()
-    channel_settings = data['items'][0]['brandingSettings']['channel']
-    description=channel_settings.get('description',"")
-    keywords = channel_settings.get('keywords',"")
-    description = prepare_feature(description)
-    ret_keys = prepare_feature(keywords)
+    items = data.get('items', [])
+    description = ""
+    ret_keys = []
+    if len(items) != 0:
+        branding = items[0]['brandingSettings']
+        channel_settings = branding.get('channel',[])
+        description=channel_settings.get('description',"")
+        keywords = channel_settings.get('keywords',"")
+        description = prepare_feature(description)
+        ret_keys = prepare_feature(keywords)
+        return description, ret_keys
     return description, ret_keys
 
+trend_dict = csv.DictReader(trending_file)
+vid_ids = create_vid_id_list(trend_dict)
 def create_files():
     trend_dict = csv.DictReader(trending_file)
     vid_ids = create_vid_id_list(trend_dict)
     for id in vid_ids:
         get_pages(id)
+
+get_pages(vid_ids[0])
