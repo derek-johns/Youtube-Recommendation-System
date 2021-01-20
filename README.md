@@ -23,7 +23,9 @@ Using a Docker container to host our Airflow allowed us to run the standard buil
 <p align="center">
 <img width="700" src = "https://github.com/agonzalez1216/Youtube-Recommendation-System/blob/dev/images/youtube_categories.png">
 </p>
+
 ***
+
 ### Technologies Involved:
 * Python
 * AWS Lightsail MySQL Database
