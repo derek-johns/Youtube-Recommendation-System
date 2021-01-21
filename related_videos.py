@@ -11,7 +11,7 @@ minutes_pattern = re.compile(r'(\d+)M')
 seconds_pattern = re.compile(r'(\d+)S')
 
 country_code='US'
-api_key='AIzaSyD8cw5N3i2SJKoSO6VNhrq2j4K-ZqutMa0'
+api_key=''
 api_name='search'
 
 snippet_features = ["title",

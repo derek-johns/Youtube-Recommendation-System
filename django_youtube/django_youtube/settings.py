@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+mysql_user = os.getenv(mysqluser)
+mysql_pw = os.getenv(mysqlpw)
+mysql_host = os.getenv(mysqlhost)
+secretkey = os.getenv(secretkey)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +26,10 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@nqfhp9=9td#$#h+wvhd2la5u454kox$!=6mneiclm+@uyw9mv'
+SECRET_KEY = secretkey
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -80,9 +84,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'group3',
-        'HOST': 'ls-981afae8457656b0e311a4599e509521975ea3c7.c13c4sg7cvg0.us-east-2.rds.amazonaws.com',
-        'USER': 'group3',
-        'PASSWORD': 'ZCW+G3+data1-2',
+        'HOST': mysql_host,
+        'USER': mysql_user,
+        'PASSWORD': mysql_pw,
     }
 }
 

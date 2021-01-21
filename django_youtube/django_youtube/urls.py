@@ -22,4 +22,5 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='gui-home'),
+    path('mlpage/<str:video_id>/', views.mlpage, name='mlpage')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
