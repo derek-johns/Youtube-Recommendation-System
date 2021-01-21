@@ -3,9 +3,9 @@ from sklearn.metrics.pairwise import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
 import mysql.connector
 import os 
-mysql_user = os.getenv(mysqluser)
-mysql_pw = os.getenv(mysqlpw)
-mysql_host = os.getenv(mysqlhost)
+mysql_user = os.getenv('mysqluser')
+mysql_pw = os.getenv('mysqlpw')
+mysql_host = os.getenv('mysqlhost')
 def connect_to_db():
     db = mysql.connector.connect(user=mysql_user,
                                  password=mysql_pw,
