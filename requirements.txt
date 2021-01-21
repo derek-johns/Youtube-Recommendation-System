@@ -6,7 +6,7 @@ mysql==0.0.2
 mysql-connector==2.2.9
 mysqlclient==2.0.3
 numpy==1.19.5
-pandas==1.2.1
+pandas==1.1.5
 Pillow==8.1.0
 python-dateutil==2.8.1
 pytz==2020.5
