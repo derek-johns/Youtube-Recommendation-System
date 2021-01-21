@@ -1,0 +1,1 @@
+web: gunicorn --pythonpath django_youtube django_youtube.wsgi
