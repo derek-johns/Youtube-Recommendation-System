@@ -32,7 +32,7 @@ SECRET_KEY = secretkey
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = debug_val
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['youtuberecommender.herokuapp.com']
 
 
 # Application definition
