@@ -1,0 +1,14 @@
+version: "3"
+services:
+  webserver:
+    build:
+      context: ./
+      dockerfile: DockerFile
+    image: puckel/docker-airflow:latest
+    container_name: youtube_trending
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+      - ./temp:/temp
+    ports:
+      - 8080:8080
+    restart: always
