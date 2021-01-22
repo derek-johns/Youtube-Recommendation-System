@@ -15,7 +15,7 @@ from airflow.hooks.mysql_hook import MySqlHook
 temp_youtube_trending_vids = '/temp/temp_youtube_trending_vids.csv'
 temp_youtube_trending_key = 'youtube-trending/{{ ds }}_US_videos.csv'
 BUCKET_NAME = 'youtube-trending'
-API_KEY = 'AIzaSyBSW9yzjTd5yHWdYXU-teE7MKDKVdAW9KQ'
+API_KEY = os.environ['YOUTUBE_KEY']
 OUTPUT_FILE = ''
 country_codes = ['US']
 
