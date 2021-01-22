@@ -2,7 +2,13 @@
 
 
 ***
-In our group of 3, we often notice that YouTube doesn't always recommend the best videos for us to watch. We get a range of various different videos or even videos we have already watched. Using YouTube's API and Machine Learning we aim to create a better video recommendation system based on videos you have watched. 
+The purpose of this project is to build a youtube recommendation system based on a users previously watched videos. We have all found that the youtube system isn't the greatest and we want to hopefully improve it. We will be doing this by using technologies such as Airflow and Spark to gather, clean and analyze data. Then we want to create a GUI to display our results.
+
+We plan to accommodate a 3 week timeline:   
+Week 1 - Data Collection and Storage  
+Week 2 - Data Cleaning and Modeling  
+Week 3 - Data Visualization
+ 
 ***
 ### Overview of Project
 Using a Docker container to host our Airflow allowed us to run the standard build on each machine. Airflow was scheduled to run daily to pull YouTube's API to grab the top trending videos. The data was then cleaned and exported to MySQL Database hosted on AWS Lightsail. Which was then exported to be used as data for visualization and machine learning models.
