@@ -325,8 +325,8 @@ fetch_video_data_from_api= PythonOperator(
     dag=dag
 )
 
-upload_to_rds = PythonOperator(
-    task_id='upload_to_rds',
+save_to_mysql = PythonOperator(
+    task_id='save_to_mysql',
     python_callable=local_to_mysql,
     dag=dag
 )
@@ -348,6 +348,6 @@ load_related_videos = PythonOperator(
 
 end_of_pipeline = DummyOperator(task_id='end_of_pipeline', dag=dag)
 
-start_of_pipeline >> fetch_video_data_from_api >> load_related_videos >> upload_to_rds >> remove_local_csv >> end_of_pipeline
+start_of_pipeline >> fetch_video_data_from_api >> load_related_videos >> save_to_mysql >> remove_local_csv >> end_of_pipeline
 
 
