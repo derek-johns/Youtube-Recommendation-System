@@ -11,6 +11,7 @@ Using a Docker container to host our Airflow allowed us to run the standard buil
 <p align="center">
 <img width="700" src = "https://github.com/agonzalez1216/Youtube-Recommendation-System/blob/dev/images/Youtube_Overview.png">
 </p>
+
 ### Summary of Data Analysis
 * NFL produced the most trending videos in January
 * Most disliked video was by Mini Ladd with a 71% dislike ratio
