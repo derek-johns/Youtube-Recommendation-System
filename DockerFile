@@ -1,0 +1,4 @@
+WORKDIR /work_dir
+
+COPY /requirements.txt /work_dir/
+RUN pip install -r requirements.txt
